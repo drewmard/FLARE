@@ -1,1 +1,1 @@
-# Models directory
+# Models directory (saved models)
