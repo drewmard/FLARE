@@ -25,7 +25,7 @@ FLARE_Predict = function(f.input,f.output,f.modelpath) {
     
     # Build feature matrix
     cols_exclude = !(colnames(df) %in% c("chr","phylop","snp_id"))
-    x = as.matrix(df[ind_chr_exclude,cols_exclude])
+    x = as.matrix(df[ind_chr_include,cols_exclude])
 
     # Load model
     f = paste0(f.modelpath,"/flare.chr",chrNum,".rds")
