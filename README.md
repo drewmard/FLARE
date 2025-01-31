@@ -1,5 +1,5 @@
 <div align="center">
-<img src="img/FLARE_logo_text" alt="FLARE_logo" width="200">
+<img src="img/FLARE_logo_text.png" alt="FLARE_logo_text" width="200">
 </div>
 
 FLARE is a context-specific functional genomic model of constraint that helps prioritize impactful rare non-coding variants.
