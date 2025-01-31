@@ -1,7 +1,7 @@
 # FLARE
 FLARE is a context-specific functional genomic model of constraint that helps prioritize impactful rare non-coding variants.
 
-<img src="img/FLARE_schematic1.png" alt="FLARE Schematic1" width="500">
+<img src="img/FLARE_schematic_1.png" alt="FLARE Schematic1" width="500">
 
 FLARE is a lasso regression model that integrates deep learning predictions with evolutionary conservation. Evolutionary conservation is a key predictor of disease risk, influenced by diverse variant mechanisms. FLARE aims to predict PhyloP conservation scores using TSS distance, nearest gene constraint, peak overlap, ChromBPNet scores, and ChromBPNet scores conditional on the variant residing within a peak. Since PhyloP scores are, by definition, not context-specific, we expect FLARE to model the relationship between genomic context, predicted regulatory effects, and evolutionary conservation specifically in cell contexts where regulation is highly relevant to conservation. 
 
