@@ -124,4 +124,4 @@ Andrew Marderstein & Soumya Kundu 📧 andrew.marderstein@gmail.com, soumyak@sta
 
 ## Cite
 
-Marderstein, Kundu, et al. Mapping the regulatory effects of common and rare non-coding variants across cellular and developmental contexts in the brain and heart.
+Marderstein^, Kundu^, et al. Mapping the regulatory effects of common and rare non-coding variants across cellular and developmental contexts in the brain and heart.
