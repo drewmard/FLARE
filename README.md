@@ -2,7 +2,7 @@
   <img src="img/FLARE_logo_text.png" alt="FLARE_logo_text" width="150">
 </div>
 
-# FLARE: Functional Linkage of Rare Variants to Evolutionary Conservation
+# 
 
 FLARE integrates **ChromBPNet** deep learning predictions with **evolutionary conservation** to prioritize impactful rare non-coding variants. Evolutionary conservation is a key predictor of disease risk, influenced by diverse variant mechanisms. FLARE predicts **PhyloP conservation scores** using:
 
