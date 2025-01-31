@@ -20,7 +20,7 @@ A powerful advantage of FLARE is that the model can be trained on any context of
 <img src="img/FLARE_schematic_1.png" alt="FLARE Schematic1" width="500">
 </div>
 
-In this repository, we provide code for FLARE model training and FLARE predictions. Below, we provide an example workflow using ASD de novo mutations since it is faster and more efficient to run to test whether the code is working. However, the results described in the manuscript from Marderstein, Kundu et al. are done using the rare variants matrix.
+In this repository, we provide code for FLARE model training and FLARE predictions. Below, we provide an example workflow using ASD de novo mutations for training and prediction since this is a much smaller set of variants to test whether the code is working. However, the results described in the manuscript from Marderstein, Kundu et al. are done by training on the rare variants matrix, and making predictions in the ASD set.
 
 ## Step 0.
 
@@ -36,6 +36,11 @@ Conda environments can be used, e.g. `conda activate r`.
 
 Next, download the input data from the Synapse directory: https://www.synapse.org/Synapse:syn64693551/files/ 
 
+Finally, you need a lot of compute to read the rare variant matrices into R! So, request it. The uncompressed rare variant file is over 40G! This should be plenty of memory, requested interactively:
+
+```
+srun --account=smontgom --partition=batch --time=24:00:00 --mem=128G --nodes=1 --ntasks=1 --cpus-per-task=1 --pty bash
+```
 
 ## Step 1. Create input feature matrix
 
@@ -72,8 +77,14 @@ model="fetal_brain"
 ./FLARE_Training.R -i $input -o $outdir
 ```
 
-
 ## Step 3. Compute FLARE scores for new variants
+
+```
+input="/oak/stanford/groups/smontgom/amarder/FLARE/data/ASD.FLARE-fb.txt"
+output="/oak/stanford/groups/smontgom/amarder/FLARE/predictions/ASD.FLARE-fb.ASD.txt"
+modelpath="/oak/stanford/groups/smontgom/amarder/FLARE/models/ASD.FLARE-fb"
+./FLARE_Predict.R -i $input -o $output -m $modelpath
+```
 
 ## Example application to de novo mutations in autism families.
 

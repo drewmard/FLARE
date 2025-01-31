@@ -7,7 +7,7 @@ library(glmnet)
 library(data.table)
 library(optparse)
 
-FLARE_Predict = function(f.input,f.output) {
+FLARE_Predict = function(f.input,f.output,f.modelpath) {
   
   # Throw error if "snp_id", "chr", or "phylop" not in feature matrix
   df = fread(f.input,data.table = F,stringsAsFactors = F)
@@ -25,7 +25,7 @@ FLARE_Predict = function(f.input,f.output) {
     x = as.matrix(df[ind_chr_include,])
     
     # Load model
-    f = paste0("/oak/stanford/groups/smontgom/amarder/chrombpnet_variant_effects/output/pred/models/",i,".",model,".chr",chrNum,".lasso.rds")
+    f = paste0(f.modelpath,"/flare.chr",chrNum,".rds")
     final_mod = readRDS(f)
     
     # Making FLARE predictions
@@ -50,7 +50,9 @@ option_list = list(
   make_option(c("-i", "--input"), type = "character",
               help = "File path for input matrix."),
   make_option(c("-o", "--output"), type = "character",
-              help = "File path for predictions.")
+              help = "File path for predictions."),
+  make_option(c("-m","--modelpath"),type = "character",
+              help = "File path for saved models.")
 )
 
 # Parse arguments
@@ -58,5 +60,5 @@ opt_parser = OptionParser(option_list = option_list)
 opt = parse_args(opt_parser)
 
 # Run:
-FLARE_Predict(opt$input,opt$output)
+FLARE_Predict(opt$input,opt$output,opt$modelpath)
 
