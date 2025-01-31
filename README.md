@@ -22,12 +22,41 @@ A powerful advantage of FLARE is that the model can be trained on any context of
 
 In this repository, we provide code for FLARE model training and FLARE predictions.
 
-## Step 1. Create input feature matrix
+## Step 0.
+
+Make sure that the following packages can be loaded in `R`:
 
 ```
+library(data.table)
+library(optparse)
+library(glmnet)
+```
 
+Conda environments can be used, e.g. `conda activate r`.
+
+
+## Step 1. Create input feature matrix
+
+From the FLARE root directory:
+
+```
+cd scripts
+input="/oak/stanford/groups/smontgom/amarder/synapse/predictions/asd.all_dataset.K562_bias.annot2.txt.gz"
+output="/oak/stanford/groups/smontgom/amarder/FLARE/data/ASD.FLARE-fb.txt"
 model="baseline + fb peaks + cbp"
-./FLARE_preprocess.R -i $input -o $output -m $model
+./FLARE_Preprocess.R -i $input -o $output -m $model
+```
+
+7 different types of models can be specified by default:
+
+```
+"baseline" (baseline model)
+"baseline + fb peaks", (FLARE-fetal brain excluding ChromBPNet predictions)
+"baseline + fb peaks + cbp", (FLARE-fetal brain)
+"baseline + ab peaks + cbp" (FLARE-adult brain)
+"baseline + brain peaks + cbp", (FLARE-brain)
+"baseline + heart peaks + cbp", (FLARE-heart)
+"complete" (FLARE-all)
 ```
 
 ## Step 2. Train FLARE models
