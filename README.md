@@ -20,7 +20,7 @@ A powerful advantage of FLARE is that the model can be trained on any context of
 <img src="img/FLARE_schematic_1.png" alt="FLARE Schematic1" width="500">
 </div>
 
-In this repository, we provide code for FLARE model training and FLARE predictions.
+In this repository, we provide code for FLARE model training and FLARE predictions. Below, we provide an example workflow using ASD de novo mutations since it is faster and more efficient to run to test whether the code is working. However, the results described in the manuscript from Marderstein, Kundu et al. are done using the rare variants matrix.
 
 ## Step 0.
 
@@ -33,6 +33,8 @@ library(glmnet)
 ```
 
 Conda environments can be used, e.g. `conda activate r`.
+
+Next, download the input data from the Synapse directory: https://www.synapse.org/Synapse:syn64693551/files/ 
 
 
 ## Step 1. Create input feature matrix
@@ -63,6 +65,12 @@ model="fetal_brain"
 
 FLARE fits a lasso regression model on the input feature matrix to predict PhyloP conservation scores. Regularization hyperparameters are tuned with 4-fold cross-validation. For each chromosome, FLARE scores are predicted from a model trained on the remaining chromosomes.
 
+```
+input="/oak/stanford/groups/smontgom/amarder/FLARE/data/ASD.FLARE-fb.txt"
+outdir="/oak/stanford/groups/smontgom/amarder/FLARE/models/ASD.FLARE-fb"
+model="fetal_brain"
+./FLARE_Training.R -i $input -o $outdir
+```
 
 
 ## Step 3. Compute FLARE scores for new variants
