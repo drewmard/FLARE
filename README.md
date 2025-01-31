@@ -43,7 +43,7 @@ From the FLARE root directory:
 cd scripts
 input="/oak/stanford/groups/smontgom/amarder/synapse/predictions/asd.all_dataset.K562_bias.annot2.txt.gz"
 output="/oak/stanford/groups/smontgom/amarder/FLARE/data/ASD.FLARE-fb.txt"
-model="fb"
+model="fetal_brain"
 ./FLARE_Preprocess.R -i $input -o $output -m $model
 ```
 

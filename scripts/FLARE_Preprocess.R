@@ -149,8 +149,8 @@ opt = parse_args(opt_parser)
 ################################################################################
 
 # Process input data
-df = initial_data_load(f.input_file)
-df = make_FLARE_input_data(df,model)
+df = initial_data_load(opt$input_file)
+df = make_FLARE_input_data(df,opt$model)
 
 # Save
 fwrite(df,opt$output_file,quote = F,na = "NA",sep = '\t',row.names = F,col.names = T)
