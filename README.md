@@ -115,3 +115,13 @@ modelpath="/oak/stanford/groups/smontgom/amarder/FLARE/models/ASD.FLARE-fb"
 ## Applications
 
 For downstream applications of FLARE scores (e.g., to ASD), refer to the [manuscript GitHub repository](https://github.com/kundajelab/neuro-variants/).
+
+## Contact
+
+For any questions, please contact:
+
+Andrew Marderstein & Soumya Kundu 📧 andrew.marderstein@gmail.com, soumyak@stanford.edu
+
+## Cite
+
+Marderstein, Kundu, et al. Mapping the regulatory effects of common and rare non-coding variants across cellular and developmental contexts in the brain and heart.
