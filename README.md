@@ -43,7 +43,7 @@ From the FLARE root directory:
 cd scripts
 input="/oak/stanford/groups/smontgom/amarder/synapse/predictions/asd.all_dataset.K562_bias.annot2.txt.gz"
 output="/oak/stanford/groups/smontgom/amarder/FLARE/data/ASD.FLARE-fb.txt"
-model="baseline + fb peaks + cbp"
+model="fb"
 ./FLARE_Preprocess.R -i $input -o $output -m $model
 ```
 
@@ -51,12 +51,12 @@ model="baseline + fb peaks + cbp"
 
 ```
 "baseline" (baseline model)
-"baseline + fb peaks", (FLARE-fetal brain excluding ChromBPNet predictions)
-"baseline + fb peaks + cbp", (FLARE-fetal brain)
-"baseline + ab peaks + cbp" (FLARE-adult brain)
-"baseline + brain peaks + cbp", (FLARE-brain)
-"baseline + heart peaks + cbp", (FLARE-heart)
-"complete" (FLARE-all)
+"fetal_brain_peaksonly", (FLARE-fetal brain excluding ChromBPNet predictions)
+"fetal_brain", (FLARE-fetal brain)
+"adult_brain" (FLARE-adult brain)
+"brain", (FLARE-brain)
+"heart", (FLARE-heart)
+"all" (FLARE-all)
 ```
 
 ## Step 2. Train FLARE models
