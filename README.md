@@ -4,7 +4,7 @@
 
 # 
 
-FLARE integrates **ChromBPNet** deep learning predictions with **evolutionary conservation** to prioritize impactful rare non-coding variants. Evolutionary conservation is a key predictor of disease risk, influenced by diverse variant mechanisms. FLARE predicts **PhyloP conservation scores** using:
+FLARE integrates ChromBPNet deep learning predictions with evolutionary conservation to prioritize impactful rare non-coding variants. Evolutionary conservation is a key predictor of disease risk, influenced by diverse variant mechanisms. FLARE predicts PhyloP conservation scores using:
 
 - TSS distance
 - Nearest gene constraint
@@ -21,11 +21,11 @@ Since PhyloP scores are not context-specific, FLARE models the relationship betw
 ## Key Features
 
 FLARE:
-1. **Disentangles** the contributions of context-specific accessibility and regulatory effects to conservation.
-2. Provides an **intuitive framework** for integrating multiple functional genomic features into a unified model.
+1. Disentangles the contributions of context-specific accessibility and regulatory effects to conservation.
+2. Provides an intuitive framework for integrating multiple functional genomic features into a unified model.
 3. Captures variants’ regulatory potential across multiple cell types through its predictions.
 
-A powerful advantage of FLARE is its adaptability. The model can be trained on any context of interest (e.g., different tissues, developmental contexts) using ChromBPNet predictions across **8,757,029 ultra-rare variants** in 1KG.
+A powerful advantage of FLARE is its adaptability. The model can be trained on any context of interest (e.g., different tissues, developmental contexts) using ChromBPNet predictions across 8,757,029 ultra-rare variants in 1KG.
 
 <div align="center">
   <img src="img/FLARE_schematic_1.png" alt="FLARE Schematic1" width="500">
@@ -35,7 +35,7 @@ A powerful advantage of FLARE is its adaptability. The model can be trained on a
 
 ## Repository Overview
 
-This repository provides code for **FLARE model training** and **FLARE predictions**. Below is an example workflow using **ASD de novo mutations** for training and prediction. This smaller dataset is ideal for testing the code. However, the results described in the manuscript from Marderstein, Kundu et al. are based on training with the rare variants matrix and making predictions on the ASD set.
+This repository provides code for **FLARE model training** and **FLARE predictions**. Below is an example workflow using ASD de novo mutations for training and prediction. This smaller dataset is ideal for testing the code. However, the results described in the manuscript from Marderstein, Kundu et al. are based on training with the rare variants matrix and making predictions on the ASD set.
 
 ---
 
