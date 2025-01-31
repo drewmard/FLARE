@@ -35,7 +35,7 @@ FLARE_Predict = function(f.input,f.output,f.modelpath) {
     predictions_lasso <- as.numeric(predict(final_mod, newx = x)[,1])
     
     # Store predictions
-    predictions_df = data.frame(snp_id = df[ind_chr_include,"snp_id"],predictions_lasso)
+    predictions_df = data.frame(snp_id = df[ind_chr_include,"snp_id"],FLARE=predictions_lasso)
     
     # Store results
     predictions_df.all[[chrNum]] = predictions_df
