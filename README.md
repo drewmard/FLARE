@@ -1,5 +1,5 @@
 <div align="center">
-<img src="img/FLARE_logo_text.png" alt="FLARE_logo_text" width="200">
+<img src="img/FLARE_logo_text.png" alt="FLARE_logo_text" width="150">
 </div>
 
 FLARE integrates ChromBPNet deep learning predictions with evolutionary conservation to help prioritize impactful rare non-coding variants. Evolutionary conservation is a key predictor of disease risk, influenced by diverse variant mechanisms. FLARE aims to predict PhyloP conservation scores using TSS distance, nearest gene constraint, peak overlap, ChromBPNet scores, and ChromBPNet scores conditional on the variant residing within a peak. Since PhyloP scores are, by definition, not context-specific, we expect FLARE to model the relationship between genomic context, predicted regulatory effects, and evolutionary conservation specifically in cell contexts where regulation is highly relevant to conservation. 
@@ -15,6 +15,10 @@ Overall, FLARE:
 - (iii) captures variants’ regulatory potential across multiple cell types through its predictions. 
 
 A powerful advantage of FLARE is that the model can be trained on any context of interest, such as  different tissues and developmental contexts, by using ChromBPNet predictions across 8,757,029 ultra-rare variants in 1KG.
+
+<div align="center">
+<img src="img/FLARE_schematic_1.png" alt="FLARE Schematic1" width="500">
+</div>
 
 In this repository, we provide code for FLARE model training and FLARE predictions.
 
