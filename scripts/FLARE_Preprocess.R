@@ -19,6 +19,8 @@ library(optparse)
 ################################################################################
 
 # Functions:
+snp_identifier = "snp_id"
+snp_identifier = "variant_id"
 
 initial_data_load = function(f.input_file) {
   # read dataframe
@@ -130,10 +132,10 @@ make_FLARE_input_data = function(df,model) {
   }
   
   if ("phylop" %in% colnames(df)) {
-    return(df[,c("snp_id","chr","phylop",cols)])
+    return(df[,c(snp_identifier,"chr","phylop",cols)])
   }
   else {
-    return(df[,c("snp_id","chr",cols)])
+    return(df[,c(snp_identifier,"chr",cols)])
   }
 }
 
