@@ -49,7 +49,7 @@ initial_data_load = function(f.input_file,
   
   if (!("s_het_1") %in% colnames(df)) {
     shet = fread(path_to_shet,data.table = F,stringsAsFactors = F)
-    df = merge(df,shet.tmp1,by.x="closest_gene_1",by.y="hgnc",all.x=TRUE)
+    df = merge(df,shet,by.x="closest_gene_1",by.y="hgnc",all.x=TRUE)
     df$s_het_1[is.na(df$s_het_1)] = mean(shet$s_het_1,na.rm=TRUE)
   }
   
