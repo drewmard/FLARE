@@ -20,28 +20,35 @@ FLARE_Predict = function(f.input,f.output,f.modelpath) {
   
   predictions_df.all = list(); cor_result = list()
   
-  for (chrNum in 1:22) {
-    cat("Making FLARE predictions using LOCO schema (chr ",chrNum,")...\n",sep = '')
+  for (chrNum in c(1:22, "X")) {
     
-    # Subset to chr of interest
-    ind_chr_include = df$chr==paste0("chr",chrNum)
+    cat("Making FLARE predictions using LOCO schema (chr ", chrNum, ")...\n", sep = '')
+    
+    # Subset variants for this chromosome
+    ind_chr_include <- df$chr == paste0("chr", chrNum)
     
     # Build feature matrix
-    cols_exclude = !(colnames(df) %in% c("chr",snp_identifier))
-    x = as.matrix(df[ind_chr_include,cols_exclude])
-
-    # Load model
-    f = paste0(f.modelpath,"/flare.chr",chrNum,".rds")
-    final_mod = readRDS(f)
+    cols_exclude <- !(colnames(df) %in% c("chr", snp_identifier))
+    x <- as.matrix(df[ind_chr_include, cols_exclude])
     
-    # Making FLARE predictions
-    predictions_lasso <- as.numeric(predict(final_mod, newx = x)[,1])
+    # Map chrX -> 22 for model loading
+    model_chr <- ifelse(chrNum == "X", 22, chrNum)
+    
+    # Load model
+    f <- paste0(f.modelpath, "/flare.chr", model_chr, ".rds")
+    final_mod <- readRDS(f)
+    
+    # Make FLARE predictions
+    predictions_lasso <- as.numeric(predict(final_mod, newx = x)[, 1])
     
     # Store predictions
-    predictions_df = data.frame(snp_id = df[ind_chr_include,snp_identifier],FLARE=predictions_lasso)
+    predictions_df <- data.frame(
+      variant_id = df[ind_chr_include, snp_identifier],
+      FLARE = predictions_lasso
+    )
     
-    # Store results
-    predictions_df.all[[chrNum]] = predictions_df
+    # Save
+    predictions_df.all[[as.character(chrNum)]] <- predictions_df
   }
   
   # Save predictions
