@@ -129,7 +129,12 @@ make_FLARE_input_data = function(df,model) {
     cols = c(cols,paste0("int_",1:length(peak_cols)))
   }
   
-  return(df[,c("snp_id","chr","phylop",cols)])
+  if ("phylop" %in% colnames(df)) {
+    return(df[,c("snp_id","chr","phylop",cols)])
+  }
+  else {
+    return(df[,c("snp_id","chr",cols)])
+  }
 }
 
 
