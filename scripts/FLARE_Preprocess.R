@@ -25,20 +25,23 @@ initial_data_load = function(f.input_file) {
   cat("Reading data...\n")
   df = fread(f.input_file,data.table = F,stringsAsFactors = F)
   
-  # Filter SNPs with missing PhyloP values
-  cat("Filter SNPs with missing PhyloP values... \n")
-  ind = !is.na(df$phylop)
-  df = df[ind,]
-  
-  cat("Performing misc. filtering... \n")
-  
   # Use log10 distance to nearest TSS in the model:
   df$gene_distance_1.log10 = log10(df$gene_distance_1+1)
   
-  # Create dummy variables for the categorical variable
-  ind = !grepl("splice",df$Consequence)
-  cat("Removing ",nrow(df) - sum(ind)," splice-related SNPs...\n")
-  df = df[ind,]
+  # THESE ARE STEPS REQUIRED FOR TRAINING, OTHERWISE IGNORED:
+  if ("phylop" %in% colnames(df)) {
+    # Filter SNPs with missing PhyloP values
+    cat("Filter SNPs with missing PhyloP values... \n")
+    ind = !is.na(df$phylop)
+    df = df[ind,]
+  }
+  
+  if ("Consequence" %in% colnames(df)) {
+    # Create dummy variables for the categorical variable
+    ind = !grepl("splice",df$Consequence)
+    cat("Removing ",nrow(df) - sum(ind)," splice-related SNPs...\n")
+    df = df[ind,]
+  }
   
   # return data
   return(df)
