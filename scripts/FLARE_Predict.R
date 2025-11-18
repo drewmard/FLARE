@@ -7,13 +7,16 @@ library(glmnet)
 library(data.table)
 library(optparse)
 
+# snp_identifier = snp_identifier
+snp_identifier = "variant_id"
+
 FLARE_Predict = function(f.input,f.output,f.modelpath) {
   
-  # Throw error if "snp_id", "chr", or "phylop" not in feature matrix
+  # Throw error if snp_identifier or "chr" not in feature matrix
   df = fread(f.input,data.table = F,stringsAsFactors = F)
-  if (!("snp_id" %in% colnames(df))) {stop('"snp_id" column is missing!')}
+  if (!(snp_identifier %in% colnames(df))) {stop('snp_identifier column is missing!')}
   if (!("chr" %in% colnames(df))) {stop('"chr" column is missing!')}
-  if (!("phylop" %in% colnames(df))) {stop('"phylop" column is missing!')}
+  # if (!("phylop" %in% colnames(df))) {stop('"phylop" column is missing!')}
   
   predictions_df.all = list(); cor_result = list()
   
@@ -24,7 +27,7 @@ FLARE_Predict = function(f.input,f.output,f.modelpath) {
     ind_chr_include = df$chr==paste0("chr",chrNum)
     
     # Build feature matrix
-    cols_exclude = !(colnames(df) %in% c("chr","phylop","snp_id"))
+    cols_exclude = !(colnames(df) %in% c("chr",snp_identifier))
     x = as.matrix(df[ind_chr_include,cols_exclude])
 
     # Load model
@@ -35,7 +38,7 @@ FLARE_Predict = function(f.input,f.output,f.modelpath) {
     predictions_lasso <- as.numeric(predict(final_mod, newx = x)[,1])
     
     # Store predictions
-    predictions_df = data.frame(snp_id = df[ind_chr_include,"snp_id"],FLARE=predictions_lasso)
+    predictions_df = data.frame(snp_id = df[ind_chr_include,snp_identifier],FLARE=predictions_lasso)
     
     # Store results
     predictions_df.all[[chrNum]] = predictions_df
