@@ -22,7 +22,9 @@ library(optparse)
 snp_identifier = "snp_id"
 snp_identifier = "variant_id"
 
-initial_data_load = function(f.input_file) {
+initial_data_load = function(f.input_file,
+                             path_to_shet = "/data1/offitk/mardera1/data/neuro_variants_notsynapse/s_het_hgnc_data.txt"
+                             ) {
   # read dataframe
   cat("Reading data...\n")
   df = fread(f.input_file,data.table = F,stringsAsFactors = F)
@@ -43,6 +45,12 @@ initial_data_load = function(f.input_file) {
     ind = !grepl("splice",df$Consequence)
     cat("Removing ",nrow(df) - sum(ind)," splice-related SNPs...\n")
     df = df[ind,]
+  }
+  
+  if (!("s_het_1") %in% colnames(df)) {
+    shet = fread(path_to_shet,data.table = F,stringsAsFactors = F)
+    df = merge(df,shet.tmp1,by.x="closest_gene_1",by.y="hgnc",all.x=TRUE)
+    df$s_het_1[is.na(df$s_het_1)] = mean(shet$s_het_1,na.rm=TRUE)
   }
   
   # return data
