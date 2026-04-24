@@ -2,6 +2,8 @@
   <img src="img/FLARE_logo_text.png" alt="FLARE_logo_text" width="150">
 </div>
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19736882.svg)](https://doi.org/10.5281/zenodo.19736882)
+
 # 
 
 FLARE integrates ChromBPNet deep learning predictions with evolutionary conservation to prioritize impactful rare non-coding variants. Evolutionary conservation is a key predictor of disease risk, influenced by diverse variant mechanisms. FLARE predicts PhyloP conservation scores using:
