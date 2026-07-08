@@ -36,6 +36,7 @@ initial_data_load = function(f.input_file,
   
   # THESE ARE STEPS REQUIRED FOR TRAINING, OTHERWISE IGNORED:
   if (!("phylop") %in% colnames(df) & training) {
+    cat("Reading SNPs for training FLARE along with PhyloP information... \n")
     snplist = fread(path_to_snplist,data.table = F,stringsAsFactors = F)
     df = merge(df,snplist,by.x=snp_identifier,by.y="snp_id",all.x=TRUE)
   }
@@ -177,6 +178,9 @@ opt = parse_args(opt_parser)
 # Process input data
 df = initial_data_load(opt$input_file,training=TRUE)
 df = make_FLARE_input_data(df,opt$model)
+
+# Renaming for consistency
+colnames(df)[colnames(df)==snp_identifier] = "snp_id"
 
 # Save
 fwrite(df,opt$output_file,quote = F,na = "NA",sep = '\t',row.names = F,col.names = T)
