@@ -23,7 +23,9 @@ snp_identifier = "snp_id"
 snp_identifier = "variant_id"
 
 initial_data_load = function(f.input_file,
-                             path_to_shet = "/data1/offitk/mardera1/data/neuro_variants_notsynapse/s_het_hgnc_data.txt"
+                             path_to_shet = "/data1/offitk/mardera1/data/neuro_variants_notsynapse/s_het_hgnc_data.txt",
+                             path_to_snplist = "/data1/offitk/mardera1/github/FLARE/data/FLARE_training_snps.txt",
+                             training = FALSE
                              ) {
   # read dataframe
   cat("Reading data...\n")
@@ -33,6 +35,11 @@ initial_data_load = function(f.input_file,
   df$gene_distance_1.log10 = log10(df$gene_distance_1+1)
   
   # THESE ARE STEPS REQUIRED FOR TRAINING, OTHERWISE IGNORED:
+  if (!("phylop") %in% colnames(df) & training) {
+    snplist = fread(path_to_snplist,data.table = F,stringsAsFactors = F)
+    df = merge(df,snplist,by.x="snp_id",by.y="snp_id",all.x=TRUE)
+  }
+  
   if ("phylop" %in% colnames(df)) {
     # Filter SNPs with missing PhyloP values
     cat("Filter SNPs with missing PhyloP values... \n")
@@ -79,7 +86,8 @@ make_FLARE_input_data = function(df,model) {
     peak_cols = grep("peak_overlap.", colnames(df), value = TRUE)
     peak_cols = grep("trevino_2021|domcke_2020",peak_cols,value = TRUE)
     peak_cols <- grep("heart", peak_cols, invert = TRUE, value = TRUE)
-    cbp_cols <- grep("abs_logfc.mean", colnames(df), value = TRUE)
+    # cbp_cols <- grep("abs_logfc.mean", colnames(df), value = TRUE)
+    cbp_cols <- grep("logfc.mean", colnames(df), value = TRUE)
     cbp_cols <- grep("pval", cbp_cols, invert = TRUE, value = TRUE)
     cbp_cols = grep("trevino_2021|domcke_2020",cbp_cols,value = TRUE)
     cbp_cols <- grep("heart", cbp_cols, invert = TRUE, value = TRUE)
@@ -167,7 +175,7 @@ opt = parse_args(opt_parser)
 ################################################################################
 
 # Process input data
-df = initial_data_load(opt$input_file)
+df = initial_data_load(opt$input_file,training=TRUE)
 df = make_FLARE_input_data(df,opt$model)
 
 # Save
