@@ -37,7 +37,7 @@ initial_data_load = function(f.input_file,
   # THESE ARE STEPS REQUIRED FOR TRAINING, OTHERWISE IGNORED:
   if (!("phylop") %in% colnames(df) & training) {
     snplist = fread(path_to_snplist,data.table = F,stringsAsFactors = F)
-    df = merge(df,snplist,by.x="snp_id",by.y="snp_id",all.x=TRUE)
+    df = merge(df,snplist,by.x=snp_identifier,by.y="snp_id",all.x=TRUE)
   }
   
   if ("phylop" %in% colnames(df)) {
