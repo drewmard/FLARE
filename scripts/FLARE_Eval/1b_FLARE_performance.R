@@ -91,11 +91,18 @@ performance_table = function(prediction_files,
     df = fread(prediction_files[[variant_set]], data.table = FALSE, stringsAsFactors = FALSE)
 
     if (!(truth_col %in% colnames(df))) {
-      if (is.null(truth_files) || !(variant_set %in% names(truth_files))) {
-        stop(paste0("'", truth_col, "' is missing for ", variant_set,
-                    ". Provide it in the prediction file or pass --truth-files ", variant_set, "=path."))
+      truth_file = NULL
+      if (!is.null(truth_files) && variant_set %in% names(truth_files)) {
+        truth_file = truth_files[[variant_set]]
+      } else if (!is.null(truth_files) && length(truth_files) == 1) {
+        truth_file = unname(truth_files[[1]])
       }
-      truth_df = fread(truth_files[[variant_set]], data.table = FALSE, stringsAsFactors = FALSE)
+
+      if (is.null(truth_file)) {
+        stop(paste0("'", truth_col, "' is missing for ", variant_set,
+                    ". Provide it in the prediction file or pass --truth-files path."))
+      }
+      truth_df = fread(truth_file, data.table = FALSE, stringsAsFactors = FALSE)
       if (!(id_col %in% colnames(df)) || !(id_col %in% colnames(truth_df))) {
         stop(paste0("'", id_col, "' is required to merge truth values for ", variant_set, "."))
       }

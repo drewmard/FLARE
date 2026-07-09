@@ -61,12 +61,18 @@ read_model_weights = function(model_dir, chr_values) {
       beta = as.matrix(coef(final_mod))[-1, , drop = FALSE]
     }
     beta_lst[[as.character(chr_num)]] = beta
-    cat("Read ", basename(f), ": ", nrow(beta), " features\n", sep = "")
   }
 
   all_features = unique(unlist(lapply(beta_lst, rownames)))
   if (length(all_features) == 0) {
     stop(paste0("No coefficient rows found in model directory: ", model_dir))
+  }
+  n_features = unique(vapply(beta_lst, nrow, integer(1)))
+  if (length(n_features) == 1) {
+    cat("Read ", length(beta_lst), " chromosome models with ", n_features, " features each\n", sep = "")
+  } else {
+    cat("Read ", length(beta_lst), " chromosome models with feature counts: ",
+        paste(n_features, collapse = ", "), "\n", sep = "")
   }
 
   beta_mat = matrix(0, nrow = length(all_features), ncol = length(beta_lst),
