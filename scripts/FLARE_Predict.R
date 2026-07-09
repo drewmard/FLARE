@@ -7,8 +7,8 @@ library(glmnet)
 library(data.table)
 library(optparse)
 
-# snp_identifier = snp_identifier
 snp_identifier = "variant_id"
+snp_identifier = "snp_id"
 
 FLARE_Predict = function(f.input,f.output,f.modelpath) {
   
