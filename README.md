@@ -28,7 +28,7 @@ FLARE:
 2. Provides an intuitive framework for integrating multiple functional genomic features into a unified model.
 3. Captures variants’ regulatory potential across multiple cell types through its predictions.
 
-A powerful advantage of FLARE is its adaptability. The model can be trained on any context of interest (e.g., different tissues, developmental contexts) using ChromBPNet predictions across 8,757,029 ultra-rare variants in 1KG.
+A powerful advantage of FLARE is its adaptability. The model can be trained on any context of interest (e.g., different tissues, developmental contexts) using ChromBPNet predictions across over 8 million ultra-rare variants in the 1000 Genomes Project.
 
 <div align="center">
   <img src="img/FLARE_schematic_1.png" alt="FLARE Schematic1" width="500">
@@ -102,7 +102,6 @@ FLARE fits a lasso regression model on the input feature matrix to predict Phylo
 ```
 input="/oak/stanford/groups/smontgom/amarder/FLARE/data/ASD.FLARE-fb.txt"
 outdir="/oak/stanford/groups/smontgom/amarder/FLARE/models/ASD.FLARE-fb"
-model="fetal_brain"
 ./FLARE_Training.R -i $input -o $outdir
 ```
 
@@ -113,6 +112,25 @@ input="/oak/stanford/groups/smontgom/amarder/FLARE/data/ASD.FLARE-fb.txt"
 output="/oak/stanford/groups/smontgom/amarder/FLARE/predictions/ASD.FLARE-fb.ASD.txt"
 modelpath="/oak/stanford/groups/smontgom/amarder/FLARE/models/ASD.FLARE-fb"
 ./FLARE_Predict.R -i $input -o $output -m $modelpath
+```
+
+## Step 4. Evaluate FLARE Models
+
+You can also evaluate trained models by extracting lasso weights and computing prediction performance against PhyloP.
+
+```
+model_dir="/oak/stanford/groups/smontgom/amarder/FLARE/models/ASD.FLARE-fb"
+./FLARE_Eval/FLARE_lasso_weights.R \
+  -m "$model_dir" \
+  -o "$model_dir/lasso_weights.txt"
+
+pred_file="/oak/stanford/groups/smontgom/amarder/FLARE/predictions/ASD.FLARE-fb.ASD.txt"
+truth_file="/oak/stanford/groups/smontgom/amarder/FLARE/data/FLARE_training_snps.txt"
+perf_file="/oak/stanford/groups/smontgom/amarder/FLARE/predictions/ASD.FLARE-fb.performance.txt"
+./FLARE_Eval/FLARE_performance.R \
+  -p "$pred_file" \
+  -t "$truth_file" \
+  -o "$perf_file"
 ```
 
 ## Applications
@@ -127,4 +145,4 @@ Andrew Marderstein & Soumya Kundu 📧 andrew.marderstein@gmail.com, soumyak@sta
 
 ## Cite
 
-Marderstein^, Kundu^, et al. Mapping the regulatory effects of common and rare non-coding variants across cellular and developmental contexts in the brain and heart.
+Marderstein, A. R., Kundu, S., et al. Decoding common and rare noncoding variant effects across cellular and developmental contexts. Nature Genetics (2026). https://doi.org/10.1038/s41588-026-02619-6
