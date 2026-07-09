@@ -30,6 +30,19 @@ initial_data_load = function(f.input_file,
   # read dataframe
   cat("Reading data...\n")
   df = fread(f.input_file,data.table = F,stringsAsFactors = F)
+
+  # Standardize signed logFC columns to absolute logFC columns for FLARE.
+  logfc_cols = grep("^logfc\\.mean\\.", colnames(df), value = TRUE)
+  if (length(logfc_cols) > 0) {
+    abs_logfc_cols = sub("^logfc\\.mean\\.", "abs_logfc.mean.", logfc_cols)
+    cat("Converting ", length(logfc_cols), " logfc.mean columns to abs_logfc.mean columns...\n", sep = "")
+    for (i in seq_along(logfc_cols)) {
+      if (abs_logfc_cols[i] %in% colnames(df)) {
+        next
+      }
+      df[[abs_logfc_cols[i]]] = abs(df[[logfc_cols[i]]])
+    }
+  }
   
   # Use log10 distance to nearest TSS in the model:
   df$gene_distance_1.log10 = log10(df$gene_distance_1+1)
@@ -87,8 +100,7 @@ make_FLARE_input_data = function(df,model) {
     peak_cols = grep("peak_overlap.", colnames(df), value = TRUE)
     peak_cols = grep("trevino_2021|domcke_2020",peak_cols,value = TRUE)
     peak_cols <- grep("heart", peak_cols, invert = TRUE, value = TRUE)
-    # cbp_cols <- grep("abs_logfc.mean", colnames(df), value = TRUE)
-    cbp_cols <- grep("logfc.mean", colnames(df), value = TRUE)
+    cbp_cols <- grep("abs_logfc.mean", colnames(df), value = TRUE)
     cbp_cols <- grep("pval", cbp_cols, invert = TRUE, value = TRUE)
     cbp_cols = grep("trevino_2021|domcke_2020",cbp_cols,value = TRUE)
     cbp_cols <- grep("heart", cbp_cols, invert = TRUE, value = TRUE)
@@ -184,6 +196,5 @@ colnames(df)[colnames(df)==snp_identifier] = "snp_id"
 
 # Save
 fwrite(df,opt$output_file,quote = F,na = "NA",sep = '\t',row.names = F,col.names = T)
-
 
 
