@@ -27,11 +27,21 @@ safe_cor_test = function(df, truth_col, predictor_col) {
     return(data.frame(r = NA_real_, l = NA_real_, h = NA_real_, n = sum(keep)))
   }
 
-  cor_result = cor.test(df[[truth_col]][keep], df[[predictor_col]][keep])
+  cor_result = tryCatch(
+    cor.test(df[[truth_col]][keep], df[[predictor_col]][keep]),
+    error = function(e) NULL
+  )
+  if (is.null(cor_result)) {
+    return(data.frame(r = NA_real_, l = NA_real_, h = NA_real_, n = sum(keep)))
+  }
+  conf_int = cor_result$conf.int
+  if (length(conf_int) < 2) {
+    conf_int = c(NA_real_, NA_real_)
+  }
   data.frame(
     r = unname(cor_result$estimate),
-    l = cor_result$conf.int[1],
-    h = cor_result$conf.int[2],
+    l = conf_int[1],
+    h = conf_int[2],
     n = sum(keep)
   )
 }
@@ -115,18 +125,23 @@ performance_table = function(prediction_files,
 
 option_list = list(
   make_option(c("-p", "--prediction-files"), type = "character",
+              dest = "prediction_files",
               help = "Comma-separated name=path prediction files, e.g. Trisomy_Controls=/path/pred.txt."),
   make_option(c("-o", "--output"), type = "character",
               help = "Output performance TSV."),
   make_option(c("-t", "--truth-files"), type = "character", default = NULL,
+              dest = "truth_files",
               help = "Optional comma-separated name=path files containing snp_id and phylop."),
   make_option(c("--predictors"), type = "character", default = NULL,
               help = "Optional comma-separated predictor columns. Defaults to numeric columns other than IDs/truth."),
   make_option(c("--truth-col"), type = "character", default = "phylop",
+              dest = "truth_col",
               help = "Observed truth column."),
   make_option(c("--id-col"), type = "character", default = "snp_id",
+              dest = "id_col",
               help = "Variant ID column used for truth merges."),
   make_option(c("--mean-output"), type = "character", default = NULL,
+              dest = "mean_output",
               help = "Optional output TSV for means and standard errors.")
 )
 
