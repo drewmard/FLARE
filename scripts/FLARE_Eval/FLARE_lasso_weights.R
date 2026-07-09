@@ -4,6 +4,10 @@ library(data.table)
 library(glmnet)
 library(optparse)
 
+default_plot_output = function(output_file) {
+  sub("\\.[^.]*$", ".pdf", output_file)
+}
+
 split_arg = function(x) {
   if (is.null(x) || is.na(x) || x == "") {
     return(character(0))
@@ -44,6 +48,78 @@ feature_type = function(feature) {
   out[grepl("logfc\\.mean|abs_logfc\\.mean", feature)] = "cbp"
   out[grepl("^int_", feature)] = "int"
   out
+}
+
+feature_context = function(feature) {
+  out = rep("Other", length(feature))
+  out[feature %in% c("s_het_1", "gene_distance_1.log10")] = "Baseline"
+  out[grepl("trevino_2021|domcke_2020", feature) & !grepl("heart", feature, ignore.case = TRUE)] = "Fetal brain"
+  out[grepl("corces_2020", feature)] = "Adult brain"
+  out[grepl("ameen_2022", feature) | grepl("heart", feature, ignore.case = TRUE)] = "Fetal heart"
+  out[grepl("encode_2024", feature)] = "Adult heart"
+  out
+}
+
+plot_lasso_weights = function(weights_df, plot_output) {
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    warning("Package 'ggplot2' is not installed; skipping lasso weight plot.")
+    return(invisible(NULL))
+  }
+
+  df = as.data.frame(weights_df)
+  df$status = df$mean_weight != 0
+  df$context = feature_context(df$feature)
+  df$type = factor(df$type, levels = c("base", "peak", "cbp", "int", "other"))
+  df$feature = factor(df$feature, levels = unique(df[order(df$type, df$context, df$feature), "feature"]))
+
+  g = ggplot2::ggplot(df, ggplot2::aes(x = model, y = feature)) +
+    ggplot2::geom_point(
+      data = subset(df, status),
+      ggplot2::aes(color = context, fill = context, shape = type),
+      size = 3,
+      stroke = 0.2
+    ) +
+    ggplot2::scale_color_manual(values = c(
+      "Baseline" = "black",
+      "Fetal brain" = "#E0CA70",
+      "Adult brain" = "#483FA3",
+      "Fetal heart" = "#852222",
+      "Adult heart" = "#A34D3F",
+      "Other" = "grey40"
+    )) +
+    ggplot2::scale_fill_manual(values = c(
+      "Baseline" = "black",
+      "Fetal brain" = "#E0CA70",
+      "Adult brain" = "#483FA3",
+      "Fetal heart" = "#852222",
+      "Adult heart" = "#A34D3F",
+      "Other" = "grey40"
+    )) +
+    ggplot2::scale_shape_manual(
+      values = c("base" = 19, "peak" = 19, "cbp" = 15, "int" = 17, "other" = 4),
+      labels = c("Base", "Peaks", "ChromBPNet", "ChromBPNet x Peak", "Other")
+    ) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      axis.text.y = ggplot2::element_blank(),
+      axis.ticks.y = ggplot2::element_blank(),
+      panel.grid.major.y = ggplot2::element_blank(),
+      axis.text.x = ggplot2::element_text(angle = 45, hjust = 1),
+      plot.title = ggplot2::element_text(hjust = 0.5)
+    ) +
+    ggplot2::labs(
+      x = "Model",
+      y = NULL,
+      color = "Context",
+      shape = "Feature Set",
+      title = "Non-Zero FLARE Coefficients"
+    ) +
+    ggplot2::guides(fill = "none")
+
+  grDevices::pdf(plot_output, width = 5, height = 8)
+  print(g)
+  grDevices::dev.off()
+  cat("Writing lasso weight plot to ", plot_output, "\n", sep = "")
 }
 
 read_model_weights = function(model_dir, chr_values) {
@@ -98,6 +174,12 @@ option_list = list(
               help = "Model dir path, comma-separated model dir paths, or comma-separated name=path model dirs."),
   make_option(c("-o", "--output"), type = "character",
               help = "Output lasso weights TSV."),
+  make_option(c("-p", "--plot-output"), type = "character", default = NULL,
+              dest = "plot_output",
+              help = "Output lasso weights PDF. Defaults to the TSV output path with .pdf extension."),
+  make_option(c("--no-plot"), action = "store_true", default = FALSE,
+              dest = "no_plot",
+              help = "Write weights TSV only."),
   make_option(c("--chromosomes"), type = "character", default = paste(1:22, collapse = ","),
               help = "Comma-separated chromosome model suffixes to read. Default: 1,2,...,22.")
 )
@@ -126,3 +208,11 @@ for (model_name in names(model_dirs)) {
 res = rbindlist(res_lst, fill = TRUE)
 cat("Writing ", nrow(res), " feature rows to ", opt$output, "\n", sep = "")
 fwrite(res, opt$output, quote = FALSE, na = "NA", sep = "\t", row.names = FALSE, col.names = TRUE)
+
+if (!opt$no_plot) {
+  plot_output = opt$plot_output
+  if (is.null(plot_output)) {
+    plot_output = default_plot_output(opt$output)
+  }
+  plot_lasso_weights(res, plot_output)
+}
