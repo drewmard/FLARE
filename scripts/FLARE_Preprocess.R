@@ -178,7 +178,10 @@ option_list = list(
   make_option(c("-o", "--output_file"), type = "character",
               help = "Output file."),
   make_option(c("-m", "--model"), type = "character", default = "fetal_brain",
-              help = "Model type.")
+              help = "Model type."),
+  make_option(c("--no-training"), action = "store_true", default = FALSE,
+              dest = "no_training",
+              help = "Preprocess variants for prediction only; do not require or merge PhyloP.")
 )
 
 # Parse arguments
@@ -188,7 +191,7 @@ opt = parse_args(opt_parser)
 ################################################################################
 
 # Process input data
-df = initial_data_load(opt$input_file,training=TRUE)
+df = initial_data_load(opt$input_file,training=!opt$no_training)
 df = make_FLARE_input_data(df,opt$model)
 
 # Renaming for consistency
@@ -196,5 +199,4 @@ colnames(df)[colnames(df)==snp_identifier] = "snp_id"
 
 # Save
 fwrite(df,opt$output_file,quote = F,na = "NA",sep = '\t',row.names = F,col.names = T)
-
 
