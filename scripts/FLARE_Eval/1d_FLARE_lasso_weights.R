@@ -18,8 +18,13 @@ read_named_arg = function(x) {
   }
 
   split_pos = regexpr("=", values, fixed = TRUE)
+  if (all(split_pos < 1)) {
+    names_out = basename(normalizePath(values, mustWork = FALSE))
+    names(values) = names_out
+    return(values)
+  }
   if (any(split_pos < 1)) {
-    stop("Expected comma-separated name=path values.")
+    stop("Do not mix plain paths and name=path values in --model-dirs.")
   }
 
   names_out = substr(values, 1, split_pos - 1)
@@ -84,7 +89,7 @@ read_model_weights = function(model_dir, chr_values) {
 option_list = list(
   make_option(c("-m", "--model-dirs"), type = "character",
               dest = "model_dirs",
-              help = "Comma-separated name=path model dirs, e.g. Trisomy_Controls=/path/new_models/Trisomy_Controls."),
+              help = "Model dir path, comma-separated model dir paths, or comma-separated name=path model dirs."),
   make_option(c("-o", "--output"), type = "character",
               help = "Output lasso weights TSV."),
   make_option(c("--chromosomes"), type = "character", default = paste(1:22, collapse = ","),

@@ -10,12 +10,42 @@ split_arg = function(x) {
   trimws(unlist(strsplit(x, ",")))
 }
 
-read_named_arg = function(x) {
+infer_file_label = function(path) {
+  label = basename(path)
+  label = sub("\\.gz$", "", label)
+  label = sub("\\.bgz$", "", label)
+  label = sub("\\.txt$", "", label)
+  label = sub("\\.tsv$", "", label)
+  label = sub("\\.FLARE\\.pred$", "", label)
+  label = sub("\\.FLARE$", "", label)
+  label = sub("\\.pred$", "", label)
+
+  parts = unlist(strsplit(label, "\\."))
+  if (length(parts) > 1) {
+    label = parts[length(parts)]
+  }
+  label
+}
+
+read_path_arg = function(x) {
   values = split_arg(x)
-  names_out = sub("=.*$", "", values)
-  paths_out = sub("^[^=]+=", "", values)
-  if (any(names_out == paths_out)) {
-    stop("Expected comma-separated name=path values.")
+  if (length(values) == 0) {
+    return(setNames(character(0), character(0)))
+  }
+
+  split_pos = regexpr("=", values, fixed = TRUE)
+  if (all(split_pos < 1)) {
+    names(values) = vapply(values, infer_file_label, character(1))
+    return(values)
+  }
+  if (any(split_pos < 1)) {
+    stop("Do not mix plain paths and name=path values.")
+  }
+
+  names_out = substr(values, 1, split_pos - 1)
+  paths_out = substr(values, split_pos + 1, nchar(values))
+  if (any(names_out == "") || any(paths_out == "")) {
+    stop("Names and paths cannot be empty.")
   }
   names(paths_out) = names_out
   paths_out
@@ -126,12 +156,12 @@ performance_table = function(prediction_files,
 option_list = list(
   make_option(c("-p", "--prediction-files"), type = "character",
               dest = "prediction_files",
-              help = "Comma-separated name=path prediction files, e.g. Trisomy_Controls=/path/pred.txt."),
+              help = "Prediction file path, comma-separated prediction file paths, or comma-separated name=path prediction files."),
   make_option(c("-o", "--output"), type = "character",
               help = "Output performance TSV."),
   make_option(c("-t", "--truth-files"), type = "character", default = NULL,
               dest = "truth_files",
-              help = "Optional comma-separated name=path files containing snp_id and phylop."),
+              help = "Optional file path, comma-separated file paths, or comma-separated name=path files containing snp_id and phylop."),
   make_option(c("--predictors"), type = "character", default = NULL,
               help = "Optional comma-separated predictor columns. Defaults to numeric columns other than IDs/truth."),
   make_option(c("--truth-col"), type = "character", default = "phylop",
@@ -147,10 +177,10 @@ option_list = list(
 
 opt = parse_args(OptionParser(option_list = option_list))
 
-prediction_files = read_named_arg(opt$prediction_files)
+prediction_files = read_path_arg(opt$prediction_files)
 truth_files = NULL
 if (!is.null(opt$truth_files)) {
-  truth_files = read_named_arg(opt$truth_files)
+  truth_files = read_path_arg(opt$truth_files)
 }
 
 performance_table(
