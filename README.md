@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="img/FLARE_logo_text_2.png" alt="FLARE_logo_text" width="150">
+  <img src="img/FLARE_logo_text_2.png" alt="FLARE_logo_text" width="90">
 </div>
 
 <br>
@@ -18,7 +18,7 @@ FLARE integrates ChromBPNet deep learning predictions with evolutionary conserva
 Since PhyloP scores are not context-specific, FLARE models the relationship between genomic context, predicted regulatory effects, and evolutionary conservation in cell contexts where regulation is highly relevant.
 
 <div align="center">
-  <img src="img/FLARE_schematic_2_2.png" alt="FLARE Schematic2" width="375">
+  <img src="img/FLARE_schematic_2_2.png" alt="FLARE Schematic2" width="475">
 </div>
 
 ## Key Features
@@ -31,7 +31,7 @@ FLARE:
 A powerful advantage of FLARE is its adaptability. The model can be trained on any context of interest (e.g., different tissues, developmental contexts) using ChromBPNet predictions across over 8 million ultra-rare variants in the 1000 Genomes Project.
 
 <div align="center">
-  <img src="img/FLARE_schematic_1_2.png" alt="FLARE Schematic1" width="500">
+  <img src="img/FLARE_schematic_1_2.png" alt="FLARE Schematic1" width="400">
 </div>
 
 ---
@@ -138,7 +138,7 @@ perf_file="/oak/stanford/groups/smontgom/amarder/FLARE/predictions/ASD.FLARE-fb.
 For downstream applications of FLARE scores (e.g., to ASD), refer to the [manuscript GitHub repository](https://github.com/kundajelab/neuro-variants/).
 
 <div align="center">
-  <img src="img/FLARE_application_2.png" alt="FLARE application" width="500">
+  <img src="img/FLARE_application_2.png" alt="FLARE application" width="800">
 </div>
 
 ## Contact
