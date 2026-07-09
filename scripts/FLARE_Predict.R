@@ -28,7 +28,7 @@ FLARE_Predict = function(f.input,f.output,f.modelpath) {
     ind_chr_include <- df$chr == paste0("chr", chrNum)
     
     # Build feature matrix
-    cols_exclude <- !(colnames(df) %in% c("chr", snp_identifier))
+    cols_exclude <- !(colnames(df) %in% c("chr", snp_identifier,"phylop"))
     x <- as.matrix(df[ind_chr_include, cols_exclude])
     
     # Map chrX -> 22 for model loading
