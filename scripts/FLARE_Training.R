@@ -16,6 +16,8 @@ FLARE_Training = function(f.input,outdir) {
   if (!("snp_id" %in% colnames(df))) {stop('"snp_id" column is missing!')}
   if (!("chr" %in% colnames(df))) {stop('"chr" column is missing!')}
   if (!("phylop" %in% colnames(df))) {stop('"phylop" column is missing!')}
+
+  dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
   
   for (chrNum in 1:22) {
     
@@ -52,7 +54,6 @@ FLARE_Training = function(f.input,outdir) {
     
     # Save model
     # Example output path directory: "/Users/amarderstein/Library/Mobile Documents/com~apple~CloudDocs/Documents/Research/FLARE/models/flare_fb"
-    dir.create(outdir)
     f.out = paste0(outdir,"/flare.chr",chrNum,".rds")
     saveRDS(final_mod,file=f.out)
   }
@@ -71,5 +72,4 @@ opt_parser = OptionParser(option_list = option_list)
 opt = parse_args(opt_parser)
 
 FLARE_Training(opt$input,opt$outdir)
-
 

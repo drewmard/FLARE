@@ -27,6 +27,10 @@ FLARE_Predict = function(f.input,f.output,f.modelpath) {
     # Subset variants for this chromosome
     ind_chr_include <- df$chr == paste0("chr", chrNum)
     
+    if (!any(ind_chr_include)) {
+      next
+    }
+
     # Build feature matrix
     cols_exclude <- !(colnames(df) %in% c("chr", snp_identifier,"phylop"))
     x <- as.matrix(df[ind_chr_include, cols_exclude])
@@ -43,9 +47,12 @@ FLARE_Predict = function(f.input,f.output,f.modelpath) {
     
     # Store predictions
     predictions_df <- data.frame(
-      variant_id = df[ind_chr_include, snp_identifier],
+      snp_id = df[ind_chr_include, snp_identifier],
       FLARE = predictions_lasso
     )
+    if ("phylop" %in% colnames(df)) {
+      predictions_df$phylop = df[ind_chr_include, "phylop"]
+    }
     
     # Save
     predictions_df.all[[as.character(chrNum)]] <- predictions_df
@@ -74,4 +81,3 @@ opt = parse_args(opt_parser)
 
 # Run:
 FLARE_Predict(opt$input,opt$output,opt$modelpath)
-
