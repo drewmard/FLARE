@@ -50,16 +50,6 @@ feature_type = function(feature) {
   out
 }
 
-feature_context = function(feature) {
-  out = rep("Other", length(feature))
-  out[feature %in% c("s_het_1", "gene_distance_1.log10")] = "Baseline"
-  out[grepl("trevino_2021|domcke_2020", feature) & !grepl("heart", feature, ignore.case = TRUE)] = "Fetal brain"
-  out[grepl("corces_2020", feature)] = "Adult brain"
-  out[grepl("ameen_2022", feature) | grepl("heart", feature, ignore.case = TRUE)] = "Fetal heart"
-  out[grepl("encode_2024", feature)] = "Adult heart"
-  out
-}
-
 plot_lasso_weights = function(weights_df, plot_output) {
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     warning("Package 'ggplot2' is not installed; skipping lasso weight plot.")
@@ -68,36 +58,48 @@ plot_lasso_weights = function(weights_df, plot_output) {
 
   df = as.data.frame(weights_df)
   df$status = df$mean_weight != 0
-  df$context = feature_context(df$feature)
   df$type = factor(df$type, levels = c("base", "peak", "cbp", "int", "other"))
-  df$feature = factor(df$feature, levels = unique(df[order(df$type, df$context, df$feature), "feature"]))
+  df$feature = factor(df$feature, levels = unique(df[order(df$type, df$feature), "feature"]))
+  df_plot = subset(df, status)
+
+  if (nrow(df_plot) == 0) {
+    warning("No non-zero lasso weights found; skipping lasso weight plot.")
+    return(invisible(NULL))
+  }
+
+  present_types = levels(droplevels(df_plot$type))
+  type_colors = c(
+    "base" = "black",
+    "peak" = "#4D4D4D",
+    "cbp" = "#483FA3",
+    "int" = "#E0CA70",
+    "other" = "grey40"
+  )
+  type_shapes = c("base" = 19, "peak" = 19, "cbp" = 15, "int" = 17, "other" = 4)
+  type_labels = c(
+    "base" = "Base",
+    "peak" = "Peaks",
+    "cbp" = "ChromBPNet",
+    "int" = "ChromBPNet x Peak",
+    "other" = "Other"
+  )
 
   g = ggplot2::ggplot(df, ggplot2::aes(x = model, y = feature)) +
     ggplot2::geom_point(
-      data = subset(df, status),
-      ggplot2::aes(color = context, fill = context, shape = type),
+      data = df_plot,
+      ggplot2::aes(color = type, shape = type),
       size = 3,
       stroke = 0.2
     ) +
-    ggplot2::scale_color_manual(values = c(
-      "Baseline" = "black",
-      "Fetal brain" = "#E0CA70",
-      "Adult brain" = "#483FA3",
-      "Fetal heart" = "#852222",
-      "Adult heart" = "#A34D3F",
-      "Other" = "grey40"
-    )) +
-    ggplot2::scale_fill_manual(values = c(
-      "Baseline" = "black",
-      "Fetal brain" = "#E0CA70",
-      "Adult brain" = "#483FA3",
-      "Fetal heart" = "#852222",
-      "Adult heart" = "#A34D3F",
-      "Other" = "grey40"
-    )) +
+    ggplot2::scale_color_manual(
+      values = type_colors[present_types],
+      breaks = present_types,
+      labels = type_labels[present_types]
+    ) +
     ggplot2::scale_shape_manual(
-      values = c("base" = 19, "peak" = 19, "cbp" = 15, "int" = 17, "other" = 4),
-      labels = c("Base", "Peaks", "ChromBPNet", "ChromBPNet x Peak", "Other")
+      values = type_shapes[present_types],
+      breaks = present_types,
+      labels = type_labels[present_types]
     ) +
     ggplot2::theme_bw() +
     ggplot2::theme(
@@ -110,11 +112,10 @@ plot_lasso_weights = function(weights_df, plot_output) {
     ggplot2::labs(
       x = "Model",
       y = NULL,
-      color = "Context",
+      color = "Feature Set",
       shape = "Feature Set",
       title = "Non-Zero FLARE Coefficients"
-    ) +
-    ggplot2::guides(fill = "none")
+    )
 
   grDevices::pdf(plot_output, width = 5, height = 8)
   print(g)

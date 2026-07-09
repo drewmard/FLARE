@@ -121,9 +121,10 @@ You can also evaluate trained models by extracting lasso weights and computing p
 ```
 model_dir="/oak/stanford/groups/smontgom/amarder/FLARE/models/ASD.FLARE-fb"
 ./FLARE_Eval/FLARE_lasso_weights.R \
-  -m "$model_dir" \
-  -o "$model_dir/lasso_weights.txt"
-
+	-m "$model_dir" \
+	-o "$model_dir/lasso_weights.txt" \
+	-p "$model_dir/lasso_weights_plot.pdf"
+	
 pred_file="/oak/stanford/groups/smontgom/amarder/FLARE/predictions/ASD.FLARE-fb.ASD.txt"
 truth_file="/oak/stanford/groups/smontgom/amarder/FLARE/data/FLARE_training_snps.txt"
 perf_file="/oak/stanford/groups/smontgom/amarder/FLARE/predictions/ASD.FLARE-fb.performance.txt"
